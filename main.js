@@ -3,10 +3,12 @@ const context = canvas1.getContext("2d");
 
 const beckGlif = ".";
 let text2d = [];
-let colum = 76;
-let row = 57;
+let colum = 76; // Количество строк
+let row = 57; // Количество символов в строке
+let аnim = true;
 
 function created2dText() {
+	// Создает 2d масив
 	for (let c = 0; c < colum; c++) {
 		text2d.push([]);
 		for (let r = 0; r < row; r++) {
@@ -15,7 +17,8 @@ function created2dText() {
 	}
 }
 
-function textGene() {
+function drawArrey() {
+	// Отрисовывает 2d масив
 	let newStrPos = 0; // отступ сверхуъ
 	let strText = "";
 
@@ -25,11 +28,12 @@ function textGene() {
 		}
 		context.fillText(strText, 0, newStrPos);
 		strText = "";
-		newStrPos = newStrPos + 12;
+		newStrPos += 12;
 	}
 }
 
 function changeNumArray(r, c) {
+	// Меняет символ в ячейке массива
 	if (c < colum && r < row) {
 		let num = 10000000000;
 		text2d[c][r] = num;
@@ -49,33 +53,40 @@ function changeNumArray(r, c) {
 	}
 }
 
-// function sinArrey() {
-// 	let x = 0;
-// 	let y = 0;
+function randomInteger(min, max) {
+	// случайное число от min до max
+	let rand = min + Math.random() * (max - min);
+	return Number(rand.toFixed(2));
+}
 
-// 	function stepsSin() {
-// 		setTimeout(() => {
-// 			y = Math.sin(x);
-// 			// y = 25 + 10 * y;
-// 			y = 25 + 10 * ((y - (y / 100) * 50) / 3);
-// 			x += 1;
-// 			changeNumArray(Math.round(y), Math.round(x));
-// 			// changeNumArray(Math.round(y) + 1, x);
-// 			// changeNumArray(Math.round(y) + 2, x);
-// 			console.log(Math.round(y));
-// 			if (x >= colum) {
-// 				x = 0;
-// 			}
-// 			stepsSin();
-// 		}, 100);
-// 	}
-// 	stepsSin();
-// }
+function sinWaveArrey() {
+	// Создает волну в массиве
+	let x = 0;
+	let y = 0;
+	let waveWidth = 0.1;
+
+	function stepsSin() {
+		setTimeout(() => {
+			if (!аnim) {
+				return;
+			}
+			y = 23 + 16 * Math.sin(x * waveWidth);
+			x += 1;
+			changeNumArray(Math.round(y), x);
+			if (x >= colum) {
+				x = 0;
+				waveWidth = randomInteger(0.05, 0.3);
+			}
+			stepsSin();
+		}, 30);
+	}
+	stepsSin();
+}
 
 function loop() {
+	// Зацикленная функция для обновления холста
 	context.clearRect(0, 0, 1000, 1000);
-
-	textGene();
+	drawArrey();
 	requestAnimationFrame(loop);
 }
 
@@ -84,10 +95,16 @@ context.font = "16px 'Anonymous Pro'";
 loop();
 created2dText();
 
-// sinArrey();
+sinWaveArrey();
 
 canvas1.onmousemove = (event) => {
 	let r = Math.round(event.offsetX / 8.8);
 	let c = Math.round(event.offsetY / 12);
 	changeNumArray(r, c);
+	аnim = false;
+};
+
+canvas1.onmouseout = () => {
+	аnim = true;
+	sinWaveArrey();
 };
