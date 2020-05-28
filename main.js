@@ -50,6 +50,8 @@ function changeNumArray(r, c) {
 			}, 100);
 		}
 		tm();
+		lastC = c;
+		lastR = r;
 	}
 }
 
@@ -97,11 +99,18 @@ created2dText();
 
 sinWaveArrey();
 
+let lastR;
+let lastC;
+
 canvas1.onmousemove = (event) => {
 	let r = Math.round(event.offsetX / 8.8);
 	let c = Math.round(event.offsetY / 12);
-	changeNumArray(r, c);
-	аnim = false;
+	if (c != lastC) {
+		changeNumArray(r, c);
+		lastR = r;
+		lastC = c;
+		аnim = false;
+	}
 };
 
 canvas1.onmouseout = () => {
