@@ -1,6 +1,5 @@
 const canvas1 = document.getElementById("canvas1");
 const context = canvas1.getContext("2d");
-context.scale(3, 3);
 
 const beckGlif = ".";
 const symbolWidth = 8.8;
@@ -119,6 +118,19 @@ function canvasSize() {
 		row = 57;
 	}
 	colum = Math.round(rect.height / symbolHeight); // Количество символов в строке
+
+	if (window.devicePixelRatio > 1) {
+		// растягивает canvas для ретина дисплеев
+		let canvasWidth = canvas1.width;
+		let canvasHeight = canvas1.height;
+
+		canvas1.width = canvasWidth * window.devicePixelRatio;
+		canvas1.height = canvasHeight * window.devicePixelRatio;
+		canvas1.style.width = canvasWidth + "px";
+		canvas1.style.height = canvasHeight + "px";
+
+		context.scale(window.devicePixelRatio, window.devicePixelRatio);
+	}
 
 	// обновляем стиль шрифта при изменение окна
 	context.fillStyle = "#9E9E9E";
