@@ -1,7 +1,11 @@
 const canvas1 = document.getElementById("canvas1");
 const context = canvas1.getContext("2d");
 
+let widthСlient = document.documentElement.clientWidth;
+let heightСlient = document.documentElement.clientHeight;
 const beckGlif = ".";
+const symbolWidth = 8.8;
+const symbolHeight = 12;
 let text2d = [];
 let rect = canvas1.getBoundingClientRect();
 let colum = 67; // Количество строк
@@ -93,8 +97,39 @@ function loop() {
 	requestAnimationFrame(loop);
 }
 
-context.fillStyle = "#9E9E9E";
-context.font = "16px 'Anonymous Pro'";
+function canvasSize() {
+	if (widthСlient >= 1000) {
+		// задаем максимальную ширину
+		canvas1.width = 1000;
+	} else {
+		canvas1.width = Math.floor(Math.floor(widthСlient / symbolWidth) * symbolWidth - symbolWidth);
+	}
+
+	if (heightСlient >= 800) {
+		// задаем максимальную высоту
+		canvas1.height = 800;
+	} else {
+		canvas1.height = Math.floor(Math.floor(heightСlient / symbolHeight) * symbolHeight - symbolHeight);
+	}
+
+	// обновляем стиль шрифта при изменение окна
+	context.fillStyle = "#9E9E9E";
+	context.font = "16px 'Anonymous Pro'";
+}
+
+window.addEventListener(
+	"resize",
+	() => {
+		widthСlient = document.documentElement.clientWidth;
+		heightСlient = document.documentElement.clientHeight;
+
+		rect = canvas1.getBoundingClientRect();
+		canvasSize();
+	},
+	false
+);
+
+canvasSize();
 loop();
 created2dText();
 
@@ -107,7 +142,7 @@ sinWaveArrey();
 			changeNumArray(r, c);
 			lastR = r;
 			lastC = c;
-			аnim = false;
+			аnim = false; // останавливает анимацию
 		}
 		text2d[2][0] = r;
 		text2d[1][0] = c;
@@ -118,23 +153,41 @@ sinWaveArrey();
 		sinWaveArrey();
 	}
 
-	canvas1.addEventListener("mousemove", (event) => {
-		r = Math.round(event.offsetX / 8.8);
-		c = Math.round(event.offsetY / 12);
-		mouseTouchEvent();
-		console.log("m");
-	});
-	canvas1.addEventListener("mouseout", () => {
-		startAnimation();
-	});
+	canvas1.addEventListener(
+		// событие для курсора мыши
+		"mousemove",
+		(event) => {
+			r = Math.round(event.offsetX / symbolWidth);
+			c = Math.round(event.offsetY / symbolHeight);
+			mouseTouchEvent();
+			console.log("m");
+		},
+		false
+	);
+	canvas1.addEventListener(
+		"mouseout",
+		() => {
+			startAnimation();
+		},
+		false
+	);
 
-	canvas1.addEventListener("touchmove", (event) => {
-		r = Math.round((event.touches[0].clientX - rect.left) / 8.8);
-		c = Math.round((event.touches[0].clientY - rect.top) / 12);
-		mouseTouchEvent();
-		console.log("t");
-	});
-	canvas1.addEventListener("touchend", () => {
-		startAnimation();
-	});
+	canvas1.addEventListener(
+		// события для тач экранов
+		"touchmove",
+		(event) => {
+			r = Math.round((event.touches[0].clientX - rect.left) / symbolWidth);
+			c = Math.round((event.touches[0].clientY - rect.top) / symbolHeight);
+			mouseTouchEvent();
+			console.log("t");
+		},
+		false
+	);
+	canvas1.addEventListener(
+		"touchend",
+		() => {
+			startAnimation();
+		},
+		false
+	);
 }
