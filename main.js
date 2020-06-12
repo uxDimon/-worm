@@ -1,5 +1,6 @@
 const canvas1 = document.getElementById("canvas1");
 const context = canvas1.getContext("2d");
+context.scale(3, 3);
 
 const beckGlif = ".";
 const symbolWidth = 8.8;
