@@ -1,16 +1,14 @@
 const canvas1 = document.getElementById("canvas1");
 const context = canvas1.getContext("2d");
 
-let widthСlient = document.documentElement.clientWidth;
-let heightСlient = document.documentElement.clientHeight;
 const beckGlif = ".";
 const symbolWidth = 8.8;
 const symbolHeight = 12;
+let widthСlient = document.documentElement.clientWidth;
+let heightСlient = document.documentElement.clientHeight;
 let text2d = [];
-let rect = canvas1.getBoundingClientRect();
-let colum = 67; // Количество строк
-let row = 57; // Количество символов в строке
 let аnim = true;
+let rect, row, colum;
 
 function created2dText() {
 	// Создает 2d масив
@@ -77,7 +75,7 @@ function sinWaveArrey() {
 			if (!аnim) {
 				return;
 			}
-			y = 23 + 16 * Math.sin(x * waveWidth);
+			y = row / 2 + (row / 3.5) * Math.sin(x * waveWidth) - 5;
 			x += 1;
 			changeNumArray(Math.round(y), x);
 			if (x >= colum) {
@@ -112,6 +110,15 @@ function canvasSize() {
 		canvas1.height = Math.floor(Math.floor(heightСlient / symbolHeight) * symbolHeight - symbolHeight);
 	}
 
+	rect = canvas1.getBoundingClientRect();
+	if (widthСlient <= 600) {
+		// Количество строк
+		row = Math.round(rect.width / symbolWidth);
+	} else {
+		row = 57;
+	}
+	colum = Math.round(rect.height / symbolHeight); // Количество символов в строке
+
 	// обновляем стиль шрифта при изменение окна
 	context.fillStyle = "#9E9E9E";
 	context.font = "16px 'Anonymous Pro'";
@@ -123,8 +130,9 @@ window.addEventListener(
 		widthСlient = document.documentElement.clientWidth;
 		heightСlient = document.documentElement.clientHeight;
 
-		rect = canvas1.getBoundingClientRect();
 		canvasSize();
+		text2d = [];
+		created2dText();
 	},
 	false
 );
@@ -132,8 +140,8 @@ window.addEventListener(
 canvasSize();
 loop();
 created2dText();
-
 sinWaveArrey();
+
 {
 	let lastR, lastC, r, c;
 
@@ -160,7 +168,6 @@ sinWaveArrey();
 			r = Math.round(event.offsetX / symbolWidth);
 			c = Math.round(event.offsetY / symbolHeight);
 			mouseTouchEvent();
-			console.log("m");
 		},
 		false
 	);
@@ -179,7 +186,6 @@ sinWaveArrey();
 			r = Math.round((event.touches[0].clientX - rect.left) / symbolWidth);
 			c = Math.round((event.touches[0].clientY - rect.top) / symbolHeight);
 			mouseTouchEvent();
-			console.log("t");
 		},
 		false
 	);
