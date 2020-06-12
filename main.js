@@ -3,7 +3,8 @@ const context = canvas1.getContext("2d");
 
 const beckGlif = ".";
 let text2d = [];
-let colum = 76; // Количество строк
+let rect = canvas1.getBoundingClientRect();
+let colum = 67; // Количество строк
 let row = 57; // Количество символов в строке
 let аnim = true;
 
@@ -34,14 +35,14 @@ function drawArrey() {
 
 function changeNumArray(r, c) {
 	// Меняет символ в ячейке массива
-	if (c < colum && r < row) {
+	if (c < colum && r < row && c >= 0 && r >= 0) {
 		let num = 10000000000;
 		text2d[c][r] = num;
 
 		function tm() {
 			setTimeout(() => {
 				if (num > 9) {
-					num = Math.round((num / 100) * 10);
+					num = num / 10;
 					text2d[c][r] = num;
 					tm();
 				} else {
@@ -98,22 +99,42 @@ loop();
 created2dText();
 
 sinWaveArrey();
+{
+	let lastR, lastC, r, c;
 
-let lastR;
-let lastC;
-
-canvas1.onmousemove = (event) => {
-	let r = Math.round(event.offsetX / 8.8);
-	let c = Math.round(event.offsetY / 12);
-	if (c != lastC) {
-		changeNumArray(r, c);
-		lastR = r;
-		lastC = c;
-		аnim = false;
+	function mouseTouchEvent() {
+		if (c != lastC) {
+			changeNumArray(r, c);
+			lastR = r;
+			lastC = c;
+			аnim = false;
+		}
+		text2d[2][0] = r;
+		text2d[1][0] = c;
 	}
-};
 
-canvas1.onmouseout = () => {
-	аnim = true;
-	sinWaveArrey();
-};
+	function startAnimation() {
+		аnim = true;
+		sinWaveArrey();
+	}
+
+	canvas1.addEventListener("mousemove", (event) => {
+		r = Math.round(event.offsetX / 8.8);
+		c = Math.round(event.offsetY / 12);
+		mouseTouchEvent();
+		console.log("m");
+	});
+	canvas1.addEventListener("mouseout", () => {
+		startAnimation();
+	});
+
+	canvas1.addEventListener("touchmove", (event) => {
+		r = Math.round((event.touches[0].clientX - rect.left) / 8.8);
+		c = Math.round((event.touches[0].clientY - rect.top) / 12);
+		mouseTouchEvent();
+		console.log("t");
+	});
+	canvas1.addEventListener("touchend", () => {
+		startAnimation();
+	});
+}
